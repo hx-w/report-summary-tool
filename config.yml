@@ -2,10 +2,10 @@
 strategy:
   # true => 保守策略，严格要求文件结构
   # false => 根据文件结构自动调整，自动获取group列表
-  safemode: true
+  safemode: false
   # true => 输出调试信息
   # false
-  debug: false
+  debug: true
 
 # 汇总最近周的数据 week_number: newest
 # 或指定周 week_number: 2021-1010-1017
@@ -28,6 +28,6 @@ file_structure:
     06_测试组 
   ]
 
-file_prefix: 通用网格生成软件个人工作周报
+file_prefix: 通用网格生成软件
 group_pattern: 0.+_.+组
 week_pattern: \d{4}-\d{4}-\d{4}
