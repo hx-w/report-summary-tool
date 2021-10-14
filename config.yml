@@ -1,0 +1,33 @@
+# 运行策略
+strategy:
+  # true => 保守策略，严格要求文件结构
+  # false => 根据文件结构自动调整，自动获取group列表
+  safemode: true
+  # true => 输出调试信息
+  # false
+  debug: false
+
+# 汇总最近周的数据 week_number: newest
+# 或指定周 week_number: 2021-1010-1017
+week_number: newest
+
+# 文件结构
+file_structure:
+  # 脚本运行的根目录，safemode=true时要求满足
+  workspace: 06_工作周报
+  # 汇总的文件夹
+  summary: 00_汇总
+  # 手动指定小组文件夹名称
+  # safemode=false时会自动获取
+  group: [
+    01_几何组,
+    02_结构网格组,
+    03_非结构网格组,
+    04_渲染组,
+    05_GUI组,
+    06_测试组 
+  ]
+
+file_prefix: 通用网格生成软件个人工作周报
+group_pattern: 0.+_.+组
+week_pattern: \d{4}-\d{4}-\d{4}
