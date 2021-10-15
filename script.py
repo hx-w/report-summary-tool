@@ -15,15 +15,27 @@ def get_swsg_week_list(group_name: str) -> list:
     return week_list
 
 
-def get_swmg_week_list() -> list:
+def get_swmg_week_list(reverse: bool = True, sw=False) -> list:
     source_dir = os.path.join('.', global_config.summary)
     pattern = re.compile(global_config.week_pattern)
     week_list = list(filter(
         lambda x: re.match(pattern, x),
         os.listdir(source_dir)
     ))
-    week_list.sort(reverse=True)
+    week_list.sort(reverse=reverse)
+    if not sw: return week_list
+    week_list = list(filter(
+        lambda x: os.path.exists(os.path.join(
+            os.path.join(source_dir, x),
+            f'{global_config.prefix}项目工作周报-{x}.xlsx'
+        )),
+        week_list
+    ))
     return week_list
+
+def get_week_count(start_week: str, end_week: str) -> int:
+    week_list = get_swmg_week_list(False)
+    return week_list.index(end_week) - week_list.index(start_week) + 1
 
 
 def judge_swsg_result_exist(group_name: str, week: str) -> bool:
@@ -157,8 +169,8 @@ def get_swsg_preview(group_name: str, week: str) -> str:
         filelist
     ))
     info_list = []
-    for idx in range(0, len(filelist), 4):
-        info_list.append((' ' * 3).join(filelist[idx:idx + 4]))
+    for idx in range(0, len(filelist), 3):
+        info_list.append((' ' * 4).join(filelist[idx:idx + 3]))
     return '\n\n'.join(info_list)
 
 

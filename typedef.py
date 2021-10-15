@@ -16,7 +16,7 @@ class Config(object):
         self.group = []
         self.prefix = '通用网格生成软件'
         self.group_pattern = '0.+_.+组'
-        self.newest_week = ''
+        # self.newest_week = ''
         self.week_pattern = '\d{4}-\d{4}-\d{4}'
         self.week_number = 'newest'
         logging.basicConfig(
