@@ -39,8 +39,10 @@ def create_ui():
         if len(cb_week['value']) > 0:
             cb_week.current(0)
             cb_week.configure(state="readonly")
+            btn_confirm.configure(state="ready")
         else:
             cb_week.configure(state="disabled")
+            btn_confirm.configure(state="disabled")
 
     cb_group = ttk.Combobox(tab_swsg, state="readonly")
     cb_group['value'] = global_config.group
@@ -64,13 +66,16 @@ def create_ui():
                 mBox.showerror('错误', '目标文件已存在，因开启安全模式，拒绝执行')
                 return
             else:
-                mBox.showwarning('警告', '目标文件已存在，因关闭安全模式，继续执行')
-        exec_sisg_merge(cb_group.get(), cb_week.get())
-        mBox.showinfo('提示', '执行成功')
+                if not mBox.askyesno('警告', '目标文件已存在，是否覆盖现有文件'):
+                    return
+                # mBox.showwarning('警告', '目标文件已存在，因关闭安全模式，继续执行')
+        distpath = exec_sisg_merge(cb_group.get(), cb_week.get())
+        mBox.showinfo('提示', '已汇总至：\n' + distpath)
 
     btn_confirm = ttk.Button(tab_swsg, text="执行", command=btn_swsg_callback)
     btn_confirm.grid(row=4, column=0, columnspan=2)
     # ----------------- tab 2 tab_swmg ----------------
+
 
     # ----------------- tab 3 tab_mw ----------------
 

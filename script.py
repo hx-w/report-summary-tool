@@ -23,7 +23,7 @@ def judge_sisg_result_exist(group_name: str, week: str) -> bool:
     return os.path.exists(result_file)
 
 
-def exec_sisg_merge(group_name: str, week: str):
+def exec_sisg_merge(group_name: str, week: str) -> list:
     source_dir = os.path.join(
         '.', os.path.join(group_name, week)
     )
@@ -50,6 +50,7 @@ def exec_sisg_merge(group_name: str, week: str):
     new_df['日期（年/月/日）'] = new_df['日期（年/月/日）'].dt.strftime('%Y/%m/%d')
     new_df.to_excel(dist_path, '工作任务项', index=False)
     logger.info(f'已经合并到文件 "{dist_path}"')
+    return dist_path
 
 
 def judge_sisg_empty(group_name: str, week: str) -> bool:
