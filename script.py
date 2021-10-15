@@ -17,7 +17,8 @@ def get_week_list(group_name: str) -> list:
 
 def get_simg_week_list() -> list:
     source_dir = os.path.join('.', global_config.summary)
-    pattern = re.compile(f'{global_config.prefix}小组工作周报-({global_config.week_pattern})-.*组.xlsx')
+    pattern = re.compile(
+        f'{global_config.prefix}小组工作周报-({global_config.week_pattern})-.*组.xlsx')
     week_list = list(filter(
         lambda x: re.match(pattern, x),
         os.listdir(source_dir)
@@ -78,3 +79,22 @@ def judge_sisg_empty(group_name: str, week: str) -> bool:
         os.listdir(source_dir)
     ))
     return len(filelist) == 0
+
+
+def get_sisg_preview(group_name: str, week: str) -> str:
+    source_dir = os.path.join(
+        '.', os.path.join(group_name, week)
+    )
+    pattern = re.compile(f'{global_config.prefix}个人工作周报-{week}-(.*).xlsx')
+    filelist = list(filter(
+        lambda x: re.match(pattern, x),
+        os.listdir(source_dir)
+    ))
+    filelist = list(map(
+        lambda x: re.findall(pattern, x)[0],
+        filelist
+    ))
+    info_list = []
+    for idx in range(0, len(filelist), 3):
+        info_list.append((' '*4).join(filelist[idx:idx+3]))
+    return '\n\n'.join(info_list)

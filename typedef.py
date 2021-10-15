@@ -52,12 +52,12 @@ class Config(object):
                 self.week_pattern = config['week_pattern']
                 self.week_number = config['week_number']
             logger.info('配置文件读取成功')
-            
+
             if self.debug:
                 logger.setLevel(logging.DEBUG)
             else:
                 logger.setLevel(logging.INFO)
-            
+
             if self.safemode:
                 if not self.__check():
                     logger.error(f'已开启safemode，工作目录与"{self.workspace}"不同')
@@ -66,7 +66,7 @@ class Config(object):
             else:
                 logger.debug('未开启safemode，跳过工作目录检查，开始获取小组名称')
                 self.__gen_group()
-            
+
             if len(self.group) == 0:
                 logger.error('配置错误？小组数量为0')
                 input('运行结束')
@@ -80,12 +80,14 @@ class Config(object):
                 logger.debug(f'手动设置周号：{self.week_number}')
                 self.newest_week = self.week_number
             else:
-                logger.error(f'{self.week_number} 不满足pattern {self.week_pattern}')
+                logger.error(
+                    f'{self.week_number} 不满足pattern {self.week_pattern}')
                 input('运行结束')
                 exit()
         except Exception as ept:
             logger.error(f'读取配置文件失败 <{ept}>')
             input('运行结束')
             exit()
+
 
 global_config = Config()
