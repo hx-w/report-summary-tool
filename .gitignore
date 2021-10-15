@@ -10,3 +10,5 @@ dist/
 /05_GUI组/
 /06_测试组/
 .DS_Store
+*.exe
+/env/06_工作周报/config.yml
