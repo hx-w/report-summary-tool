@@ -34,6 +34,31 @@ def judge_swsg_result_exist(group_name: str, week: str) -> bool:
     )
     return os.path.exists(result_file)
 
+def judge_swmg_result_exist(week: str) -> bool:
+    source_dir = os.path.join('.', global_config.summary)
+    result_file = os.path.join(
+        source_dir,
+        os.path.join(week, f'{global_config.prefix}项目工作周报-{week}.xlsx')
+    )
+    return os.path.exists(result_file)
+
+
+def judge_swmg_group_complete(week: str) -> bool:
+    trim_group = list(map(lambda x: x[3:], global_config.group))
+    trim_group.sort()
+    pattern = re.compile(f'{global_config.prefix}小组工作周报-{week}-(.*组).xlsx')
+    source_dir = os.path.join('.', os.path.join(global_config.summary, week))
+    group_list = list(filter(
+        lambda x: re.match(pattern, x),
+        os.listdir(source_dir)
+    ))
+    group_list = list(map(
+        lambda x: re.findall(pattern, x)[0],
+        group_list
+    ))
+    group_list.sort()
+    return trim_group == group_list
+
 
 def exec_swsg_merge(group_name: str, week: str) -> list:
     source_dir = os.path.join(

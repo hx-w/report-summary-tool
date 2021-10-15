@@ -159,14 +159,20 @@ def create_ui():
         if judge_swmg_empty(cb_swmg_week.get()):
             mBox.showerror('错误', '周报文件夹为空，拒绝执行')
             return
-        # if judge_swsg_result_exist(cb_swsg_group.get(), cb_swsg_week.get()):
-        #     if global_config.safemode:
-        #         mBox.showerror('错误', '目标文件已存在，因开启安全模式，拒绝执行')
-        #         return
-        #     else:
-        #         if not mBox.askyesno('警告', '目标文件已存在，是否覆盖现有文件'):
-        #             return
-        #         # mBox.showwarning('警告', '目标文件已存在，因关闭安全模式，继续执行')
+        if not judge_swmg_group_complete(cb_swmg_week.get()):
+            if global_config.safemode:
+                mBox.showerror('错误', '已汇总的小组名单与当前小组名单不匹配，因开启安全模式，拒绝执行')
+                return
+            else:
+                if not mBox.askyesno('警告', '已汇总的小组名单与当前小组名单不匹配，是否继续执行'):
+                    return
+        if judge_swmg_result_exist(cb_swmg_week.get()):
+            if global_config.safemode:
+                mBox.showerror('错误', '目标文件已存在，因开启安全模式，拒绝执行')
+                return
+            else:
+                if not mBox.askyesno('警告', '目标文件已存在，是否覆盖现有文件'):
+                    return
         distpath = exec_swmg_merge(cb_swmg_week.get())
         mBox.showinfo('提示', '已汇总至：\n' + distpath)
     btn_swmg_confirm = ttk.Button(tab_swmg, text="执行", command=btn_swmg_callback)
