@@ -3,6 +3,7 @@
 from typedef import *
 import pandas as pd
 
+
 def get_week_list(group_name: str) -> list:
     source_dir = os.path.join('.', group_name)
     pattern = re.compile(global_config.week_pattern)
@@ -11,6 +12,20 @@ def get_week_list(group_name: str) -> list:
         os.listdir(source_dir)
     ))
     week_list.sort(reverse=True)
+    return week_list
+
+
+def get_simg_week_list() -> list:
+    source_dir = os.path.join('.', global_config.summary)
+    pattern = re.compile(f'{global_config.prefix}小组工作周报-({global_config.week_pattern})-.*组.xlsx')
+    week_list = list(filter(
+        lambda x: re.match(pattern, x),
+        os.listdir(source_dir)
+    ))
+    week_list = list(map(
+        lambda x: re.findall(pattern, x)[0],
+        week_list
+    ))
     return week_list
 
 
@@ -36,7 +51,7 @@ def exec_sisg_merge(group_name: str, week: str) -> list:
         global_config.summary,
         f'{global_config.prefix}小组工作周报-{week}-{group_name[3:]}.xlsx'
     )
-    
+
     df_list = []
     for eachfile in filelist:
         name = re.findall(pattern, eachfile)[0]

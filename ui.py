@@ -74,8 +74,15 @@ def create_ui():
 
     btn_confirm = ttk.Button(tab_swsg, text="执行", command=btn_swsg_callback)
     btn_confirm.grid(row=4, column=0, columnspan=2)
-    # ----------------- tab 2 tab_swmg ----------------
 
+    # ----------------- tab 2 tab_swmg ----------------
+    ttk.Label(tab_swmg, text='选择周次').grid(row=0, column=0, padx=10, pady=10)
+    cb_simg_week = ttk.Combobox(tab_swmg, state="readonly")
+    cb_simg_week['value'] = get_simg_week_list()
+
+    if len(cb_week['value']) > 0:
+        cb_simg_week.current(0)
+    cb_simg_week.grid(row=0, column=1)
 
     # ----------------- tab 3 tab_mw ----------------
 
