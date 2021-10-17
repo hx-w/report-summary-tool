@@ -3,9 +3,6 @@
 # ======================
 import tkinter as tk
 from tkinter import ttk
-from tkinter import scrolledtext
-from tkinter import Menu
-from tkinter import Spinbox
 from tkinter import messagebox as mBox
 
 from script import *
@@ -34,7 +31,7 @@ def create_ui():
         if tab == '单周单组汇总':
             pass
         elif tab == '单周全组汇总':
-            cb_swmg_week['value'] = get_swmg_week_list()
+            cb_swmg_week['value'] = get_swmg_week_list(True, True)
             text_swmg_preview.configure(state="normal")
             text_swmg_preview.delete(1.0, tk.END)
             if len(cb_swmg_week['value']) == 0:
@@ -149,7 +146,7 @@ def create_ui():
 
     btn_swsg_confirm = ttk.Button(
         tab_swsg, text="执行", command=btn_swsg_callback)
-    btn_swsg_confirm.grid(row=5, column=0, columnspan=2, pady=20)
+    btn_swsg_confirm.grid(row=8, column=0, columnspan=2, pady=20)
 
     # ----------------- tab 2 tab_swmg ----------------
     def cb_swmg_week_callback(event):
@@ -253,6 +250,20 @@ def create_ui():
         label_week_count.configure(text="0")
     label_week_count.grid(row=2, column=1, sticky=tk.W)
 
+    def btn_mw_callback():
+        if judge_mw_result_exist(cb_mw_start_week.get(), cb_mw_end_week.get()):
+            if global_config.safemode:
+                mBox.showerror('错误', '目标文件已存在，因开启安全模式，拒绝执行')
+                return
+            else:
+                if not mBox.askyesno('警告', '目标文件已存在，是否覆盖现有文件'):
+                    return
+        distpath = exec_mw_merge(cb_mw_start_week.get(), cb_mw_end_week.get())
+        mBox.showinfo('提示', '已汇总至：\n' + distpath)
+
+    btn_mw_confirm = ttk.Button(
+        tab_mw, text="执行", command=btn_mw_callback)
+    btn_mw_confirm.grid(row=3, column=0, columnspan=2, pady=20)
     # # ----------------- log ------------------
     # log_frame = tk.Frame(win)
     # m_text = tk.Text(log_frame)

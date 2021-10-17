@@ -23,7 +23,7 @@ def get_swmg_week_list(reverse: bool = True, sw=False) -> list:
         os.listdir(source_dir)
     ))
     week_list.sort(reverse=reverse)
-    if not sw: return week_list
+    if sw: return week_list
     week_list = list(filter(
         lambda x: os.path.exists(os.path.join(
             os.path.join(source_dir, x),
@@ -54,6 +54,16 @@ def judge_swmg_result_exist(week: str) -> bool:
     )
     return os.path.exists(result_file)
 
+def judge_mw_result_exist(start_week: str, end_week: str) -> bool:
+    week_list = get_swmg_week_list(False)
+    dist_path = os.path.join(
+        global_config.summary,
+        f'{global_config.prefix}项目工作报告-{"".join(start_week.split("-")[:2])}-{"".join(end_week.split("-")[::2])}.xlsx'
+    )
+    if start_week == week_list[0] and end_week == week_list[-1]:
+        dist_path = os.path.join(global_config.summary, f'{global_config.prefix}项目工作报告.xlsx')
+    return os.path.exists(dist_path)
+
 
 def judge_swmg_group_complete(week: str) -> bool:
     trim_group = list(map(lambda x: x[3:], global_config.group))
@@ -72,7 +82,7 @@ def judge_swmg_group_complete(week: str) -> bool:
     return trim_group == group_list
 
 
-def exec_swsg_merge(group_name: str, week: str) -> list:
+def exec_swsg_merge(group_name: str, week: str, backup: bool = False) -> str:
     source_dir = os.path.join(
         '.', os.path.join(group_name, week)
     )
@@ -89,7 +99,6 @@ def exec_swsg_merge(group_name: str, week: str) -> list:
         dist_dir,
         f'{global_config.prefix}小组工作周报-{week}-{group_name[3:]}.xlsx'
     )
-
     df_list = []
     for eachfile in filelist:
         name = re.findall(pattern, eachfile)[0]
@@ -101,12 +110,16 @@ def exec_swsg_merge(group_name: str, week: str) -> list:
     new_df.reset_index(drop=True, inplace=True)
     new_df['序号'] = pd.Series(list(range(1, len(new_df) + 1)))
     new_df['日期（年/月/日）'] = new_df['日期（年/月/日）'].dt.strftime('%Y/%m/%d')
+
+    if backup and os.path.exists(dist_path):
+        os.rename(dist_path, dist_path + '.bak')
+
     new_df.to_excel(dist_path, '工作任务项', index=False)
     logger.info(f'已经合并到文件 "{dist_path}"')
     return dist_path
 
 
-def exec_swmg_merge(week: str) -> list:
+def exec_swmg_merge(week: str, backup: bool = False) -> str:
     dist_dir = os.path.join(global_config.summary, week)
     # if not os.path.exists(dist_dir):
     #     logger.debug(f'目录 "{dist_dir}" 不存在，已创建')
@@ -131,9 +144,41 @@ def exec_swmg_merge(week: str) -> list:
     new_df.reset_index(drop=True, inplace=True)
     new_df['序号'] = pd.Series(list(range(1, len(new_df) + 1)))
     # new_df['日期（年/月/日）'] = new_df['日期（年/月/日）'].dt.strftime('%Y/%m/%d')
+    if backup and os.path.exists(dist_path):
+        os.rename(dist_path, dist_path + '.bak')
+
     new_df.to_excel(dist_path, '工作任务项', index=False)
     logger.info(f'已经合并到文件 "{dist_path}"')
 
+    return dist_path
+
+def exec_mw_merge(start_week: str, end_week: str, backup: bool = False) -> str:
+    week_list = get_swmg_week_list(False)
+    start_idx = week_list.index(start_week)
+    end_idx = week_list.index(end_week)
+
+    dist_path = os.path.join(
+        global_config.summary,
+        f'{global_config.prefix}项目工作报告-{"".join(start_week.split("-")[:2])}-{"".join(end_week.split("-")[::2])}.xlsx'
+    )
+    if start_idx == 0 and end_idx == len(week_list) - 1:
+        dist_path = os.path.join(global_config.summary, f'{global_config.prefix}项目工作报告.xlsx')
+    df_list = []
+    for eachweek_idx in range(start_idx, end_idx + 1):
+        eachweek = week_list[eachweek_idx]
+        file_path = os.path.join(global_config.summary, os.path.join(
+            eachweek, f'{global_config.prefix}项目工作周报-{eachweek}.xlsx'
+        ))
+        df = pd.read_excel(file_path)
+        df_list.append(df)
+    
+    new_df = pd.concat(df_list)
+    new_df.reset_index(drop=True, inplace=True)
+    new_df['序号'] = pd.Series(list(range(1, len(new_df) + 1)))
+    if backup and os.path.exists(dist_path):
+        os.rename(dist_path, dist_path + '.bak')
+    new_df.to_excel(dist_path, '工作任务项', index=False)
+    logger.info(f'已经合并到文件 "{dist_path}"')
     return dist_path
 
 
