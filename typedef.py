@@ -16,9 +16,7 @@ class Config(object):
         self.group = []
         self.prefix = '通用网格生成软件'
         self.group_pattern = '0.+_.+组'
-        # self.newest_week = ''
         self.week_pattern = '\d{4}-\d{4}-\d{4}'
-        self.week_number = 'newest'
         logging.basicConfig(
             format='[%(levelname)s] %(message)s',
             level=logging.INFO
@@ -50,7 +48,6 @@ class Config(object):
                 self.prefix = config['file_prefix']
                 self.group_pattern = config['group_pattern']
                 self.week_pattern = config['week_pattern']
-                self.week_number = config['week_number']
             logger.info('配置文件读取成功')
 
             if self.debug:
@@ -73,17 +70,6 @@ class Config(object):
                 exit()
             else:
                 self.group.sort()
-
-            if self.week_number == 'newest':
-                logger.debug('week_number = newest; 获取最新周')
-            elif re.match(self.week_pattern, self.week_number):
-                logger.debug(f'手动设置周号：{self.week_number}')
-                self.newest_week = self.week_number
-            else:
-                logger.error(
-                    f'{self.week_number} 不满足pattern {self.week_pattern}')
-                input('运行结束')
-                exit()
         except Exception as ept:
             logger.error(f'读取配置文件失败 <{ept}>')
             input('运行结束')

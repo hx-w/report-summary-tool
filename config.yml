@@ -7,10 +7,6 @@ strategy:
   # false
   debug: true
 
-# 汇总最近周的数据 week_number: newest
-# 或指定周 week_number: 2021-1010-1017
-week_number: newest
-
 # 文件结构
 file_structure:
   # 脚本运行的根目录，safemode=true时要求满足
@@ -27,6 +23,7 @@ file_structure:
     05_GUI组,
     06_测试组 
   ]
+  template: 模板
 
 file_prefix: 通用网格生成软件
 group_pattern: 0.+_.+组

@@ -10,6 +10,8 @@ from script import *
 win = tk.Tk()
 win.title('周报汇总工具')
 
+VERSION = 'v0.2-beta'
+
 
 def create_ui():
     main_frame = tk.Frame(win)
@@ -25,6 +27,9 @@ def create_ui():
     notebook.add(tab_swmg, text='单周全组汇总')
     notebook.add(tab_mw, text='多周汇总')
     notebook.pack()
+
+    _copyright = ttk.Label(main_frame, text=f'{VERSION} @hx')
+    _copyright.pack(side=tk.RIGHT)
 
     def tab_changed_callback(event):
         tab = event.widget.tab('current')['text']
