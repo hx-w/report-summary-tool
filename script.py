@@ -128,6 +128,7 @@ def exec_swsg_merge(group_name: str, week: str, backup: bool = False) -> str:
         elif dist_sheet.cell(1, idx).value == '日期（年/月/日）':
             col_date = idx - 1
 
+    total_order = 1
     for eachfile in filelist:
         name = re.findall(pattern, eachfile)[0]
         full_path = os.path.join(source_dir, eachfile)
@@ -142,7 +143,9 @@ def exec_swsg_merge(group_name: str, week: str, backup: bool = False) -> str:
             row_element.insert(col_name, name)
             row_element[col_date] = datetime.datetime.strftime(
                 row_element[col_date], "%Y/%m/%d")
+            row_element[0] = total_order
             dist_sheet.append(row_element)
+            total_order += 1
     
     # align to left
     for row in dist_sheet.iter_rows(min_row=2):
@@ -193,6 +196,7 @@ def exec_swmg_merge(week: str, backup: bool = False) -> str:
         elif dist_sheet.cell(1, idx).value == '日期（年/月/日）':
             col_date = idx - 1
 
+    total_order = 1
     for eachfile in filelist:
         group_name = re.findall(pattern, eachfile)[0]
         full_path = os.path.join(dist_dir, eachfile)
@@ -208,7 +212,9 @@ def exec_swmg_merge(week: str, backup: bool = False) -> str:
             if not isinstance(row_element[col_date], str):
                 row_element[col_date] = datetime.datetime.strftime(
                     row_element[col_date], "%Y/%m/%d")
+            row_element[0] = total_order
             dist_sheet.append(row_element)
+            total_order += 1
     
     # align to left
     for row in dist_sheet.iter_rows(min_row=2):
@@ -242,21 +248,73 @@ def exec_mw_merge(start_week: str, end_week: str, backup: bool = False) -> str:
     if start_idx == 0 and end_idx == len(week_list) - 1:
         dist_path = os.path.join(
             global_config.summary, f'{global_config.prefix}项目工作报告.xlsx')
-    df_list = []
+
+    if backup and os.path.exists(dist_path):
+        os.rename(dist_path, dist_path + '.bak')
+    
+
+    # cp template
+    shutil.copyfile(global_config.template_project, dist_path)
+
+    dist_book = openpyxl.load_workbook(dist_path)
+    dist_sheet = dist_book['工作任务项']
+    dist_sheet.delete_rows(2, dist_sheet.max_row + 1)
+    col_date = 0
+    for idx in range(1, 1 + dist_sheet.max_column):
+        if dist_sheet.cell(1, idx).value == '日期（年/月/日）':
+            col_date = idx - 1
+            break
+    
+    total_order = 1
     for eachweek_idx in range(start_idx, end_idx + 1):
         eachweek = week_list[eachweek_idx]
         file_path = os.path.join(global_config.summary, os.path.join(
             eachweek, f'{global_config.prefix}项目工作周报-{eachweek}.xlsx'
         ))
-        df = pd.read_excel(file_path)
-        df_list.append(df)
+        source_sheet = openpyxl.load_workbook(
+            file_path, read_only=True)['工作任务项']
+        # print(source_sheet[1])
+        for row_idx in range(2, source_sheet.max_row + 1):
+            row_element = []
+            for col_idx in range(1, source_sheet.max_column + 1):
+                row_element.append(source_sheet.cell(
+                    row=row_idx, column=col_idx).value)
+            if not isinstance(row_element[col_date], str):
+                row_element[col_date] = datetime.datetime.strftime(
+                    row_element[col_date], "%Y/%m/%d")
+            row_element[0] = total_order
+            dist_sheet.append(row_element)
+            total_order += 1
+    
+    # align to left
+    for row in dist_sheet.iter_rows(min_row=2):
+        for col in row:
+            col.alignment = align
 
-    new_df = pd.concat(df_list)
-    new_df.reset_index(drop=True, inplace=True)
-    new_df['序号'] = pd.Series(list(range(1, len(new_df) + 1)))
-    if backup and os.path.exists(dist_path):
-        os.rename(dist_path, dist_path + '.bak')
-    new_df.to_excel(dist_path, '工作任务项', index=False)
+    # update pivot table
+    for sheet_idx in range(len(dist_book.sheetnames)):
+        if dist_book.sheetnames[sheet_idx] == '工作任务项':
+            continue
+        pivot_sheet = dist_book[dist_book.sheetnames[sheet_idx]]
+        pivot = pivot_sheet._pivots[0]  # 任何一个都可以共享同一个缓存
+        boundary = f'A1:{chr(ord("A") + dist_sheet.max_column - 1)}{dist_sheet.max_row}'
+        pivot.cache.cacheSource.worksheetSource.ref = boundary
+        pivot.cache.refreshOnLoad = True  # 刷新加载
+
+    dist_book.save(dist_path)
+    # df_list = []
+    # for eachweek_idx in range(start_idx, end_idx + 1):
+    #     eachweek = week_list[eachweek_idx]
+    #     file_path = os.path.join(global_config.summary, os.path.join(
+    #         eachweek, f'{global_config.prefix}项目工作周报-{eachweek}.xlsx'
+    #     ))
+    #     df = pd.read_excel(file_path)
+    #     df_list.append(df)
+
+    # new_df = pd.concat(df_list)
+    # new_df.reset_index(drop=True, inplace=True)
+    # new_df['序号'] = pd.Series(list(range(1, len(new_df) + 1)))
+    # new_df.to_excel(dist_path, '工作任务项', index=False)
     logger.info(f'已经合并到文件 "{dist_path}"')
     return dist_path
 
