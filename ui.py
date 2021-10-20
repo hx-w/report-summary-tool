@@ -86,6 +86,7 @@ def create_ui():
         cb_swsg_week['value'] = get_swmg_week_list(True, True)
         text_swsg_preview.configure(state="normal")
         text_swsg_preview.delete(1.0, tk.END)
+        label_swsg_count.configure(text=f'{get_swsg_count(cb_swsg_group.get(), cb_swsg_week.get())}人')
         if judge_swsg_empty(cb_swsg_group.get(), cb_swsg_week.get()):
             btn_swsg_confirm.configure(state="disabled")
             text_swsg_preview.insert(tk.END, '<空>')
@@ -99,6 +100,7 @@ def create_ui():
         choose_week = cb_swsg_week.get()
         text_swsg_preview.configure(state="normal")
         text_swsg_preview.delete(1.0, tk.END)
+        label_swsg_count.configure(text=f'{get_swsg_count(cb_swsg_group.get(), cb_swsg_week.get())}人')
         if judge_swsg_empty(cb_swsg_group.get(), choose_week):
             btn_swsg_confirm.configure(state="disabled")
             text_swsg_preview.insert(tk.END, '<空>')
@@ -129,6 +131,11 @@ def create_ui():
     text_swsg_preview.insert(tk.END, get_swsg_preview(
         cb_swsg_group.get(), cb_swsg_week.get()))
     text_swsg_preview.configure(state="disabled")
+
+    ttk.Label(tab_swsg, text='成员计数').grid(row=6, column=0, pady=10)
+    label_swsg_count = ttk.Label(tab_swsg, text='0人')
+    label_swsg_count.configure(text=f'{get_swsg_count(cb_swsg_group.get(), cb_swsg_week.get())}人')
+    label_swsg_count.grid(row=6, column=1, pady=10, sticky=tk.W)
 
     def btn_swsg_callback():
         if judge_swsg_empty(cb_swsg_group.get(), cb_swsg_week.get()):
