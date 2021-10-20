@@ -126,7 +126,7 @@ def create_ui():
     cb_swsg_week.bind("<<ComboboxSelected>>", cb_swsg_week_callback)
 
     ttk.Label(tab_swsg, text='成员预览').grid(row=2, column=0, pady=10)
-    text_swsg_preview = tk.Text(tab_swsg, width=28, height=5, state='normal')
+    text_swsg_preview = tk.Text(tab_swsg, width=25, height=5, state='normal')
     text_swsg_preview.grid(row=2, column=1, rowspan=3, sticky='NW', pady=10)
     text_swsg_preview.insert(tk.END, get_swsg_preview(
         cb_swsg_group.get(), cb_swsg_week.get()))
@@ -168,6 +168,7 @@ def create_ui():
         choose_week = cb_swmg_week.get()
         text_swmg_preview.configure(state="normal")
         text_swmg_preview.delete(1.0, tk.END)
+        label_swmg_count.configure(text=f'{get_swmg_count(cb_swmg_week.get())}组')
         if judge_swmg_empty(choose_week):
             btn_swmg_confirm.configure(state="disabled")
             text_swmg_preview.insert(tk.END, '<空>')
@@ -186,10 +187,15 @@ def create_ui():
     cb_swmg_week.bind("<<ComboboxSelected>>", cb_swmg_week_callback)
 
     ttk.Label(tab_swmg, text='成员预览').grid(row=1, column=0, pady=10)
-    text_swmg_preview = tk.Text(tab_swmg, width=28, height=5, state='normal')
+    text_swmg_preview = tk.Text(tab_swmg, width=25, height=5, state='normal')
     text_swmg_preview.grid(row=1, column=1, rowspan=3, sticky='NW', pady=10)
     text_swmg_preview.insert(tk.END, get_swmg_preview(cb_swmg_week.get()))
     text_swmg_preview.configure(state="disabled")
+
+    ttk.Label(tab_swmg, text='成员计数').grid(row=4, column=0, pady=10)
+    label_swmg_count = ttk.Label(tab_swmg, text='0组')
+    label_swmg_count.configure(text=f'{get_swmg_count(cb_swmg_week.get())}组')
+    label_swmg_count.grid(row=4, column=1, pady=10, sticky=tk.W)
 
     def btn_swmg_callback():
         if judge_swmg_empty(cb_swmg_week.get()):
@@ -213,7 +219,7 @@ def create_ui():
         mBox.showinfo('提示', '已汇总至：\n' + distpath)
     btn_swmg_confirm = ttk.Button(
         tab_swmg, text="执行", command=btn_swmg_callback)
-    btn_swmg_confirm.grid(row=4, column=0, columnspan=2, pady=20)
+    btn_swmg_confirm.grid(row=5, column=0, columnspan=2, pady=20)
 
     # ----------------- tab 3 tab_mw ----------------
     def cb_mw_start_week_callback(event):
@@ -227,11 +233,11 @@ def create_ui():
         else:
             cb_mw_end_week.current(cb_mw_end_week['value'].index(start_week))
         label_week_count.configure(
-            text=str(get_week_count(start_week, cb_mw_end_week.get())))
+            text=str(get_week_count(start_week, cb_mw_end_week.get())) + '周')
 
     def cb_mw_end_week_callback(event):
         label_week_count.configure(text=str(get_week_count(
-            cb_mw_start_week.get(), cb_mw_end_week.get())))
+            cb_mw_start_week.get(), cb_mw_end_week.get())) + '周')
 
     ttk.Label(tab_mw, text='开始周次（升序）').grid(row=0, column=0, padx=10, pady=10)
     cb_mw_start_week = ttk.Combobox(
@@ -260,9 +266,9 @@ def create_ui():
     label_week_count = ttk.Label(tab_mw)
     if len(cb_mw_start_week['value']) > 0:
         label_week_count.configure(text=str(get_week_count(
-            cb_mw_start_week.get(), cb_mw_end_week.get())))
+            cb_mw_start_week.get(), cb_mw_end_week.get())) + '周')
     else:
-        label_week_count.configure(text="0")
+        label_week_count.configure(text="0周")
     label_week_count.grid(row=2, column=1, sticky=tk.W)
 
     def btn_mw_callback():

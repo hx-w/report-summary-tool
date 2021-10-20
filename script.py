@@ -54,6 +54,15 @@ def get_swsg_count(group: str, week: str) -> int:
     ))
     return len(filelist)
 
+def get_swmg_count(week: str) -> int:
+    pattern = re.compile(f'{global_config.prefix}小组工作周报-{week}-(.*组).xlsx')
+    source_dir = os.path.join('.', os.path.join(global_config.summary, week))
+    group_list = list(filter(
+        lambda x: re.match(pattern, x),
+        os.listdir(source_dir)
+    ))
+    return len(group_list)
+
 
 def get_week_count(start_week: str, end_week: str) -> int:
     week_list = get_swmg_week_list(False)
