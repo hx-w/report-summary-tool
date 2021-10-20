@@ -1,11 +1,7 @@
-git reset --hard
-
-git pull
-
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 rm -rf build/ dist/
 rm -f main.spec
-pyinstaller -F -i static/icon.ico main.py
+pyinstaller -D -w -i static/icon.ico main.py
 rm -rf build/
 rm -f main.spec
 
