@@ -167,9 +167,6 @@ def exec_swsg_merge(group_name: str, week: str, backup: bool = False) -> str:
 
 def exec_swmg_merge(week: str, backup: bool = False) -> str:
     dist_dir = os.path.join(global_config.summary, week)
-    # if not os.path.exists(dist_dir):
-    #     logger.debug(f'目录 "{dist_dir}" 不存在，已创建')
-    #     os.makedirs(dist_dir)
     dist_path = os.path.join(
         dist_dir,
         f'{global_config.prefix}项目工作周报-{week}.xlsx'
@@ -179,23 +176,57 @@ def exec_swmg_merge(week: str, backup: bool = False) -> str:
         lambda x: re.match(pattern, x),
         os.listdir(dist_dir)
     ))
-    df_list = []
-    for eachfile in filelist:
-        group_name = re.findall(pattern, eachfile)[0]
-        full_path = os.path.join(dist_dir, eachfile)
-        df = pd.read_excel(full_path)
-        df.insert(1, '组名', group_name)
-        df_list.append(df)
-    new_df = pd.concat(df_list)
-    new_df.reset_index(drop=True, inplace=True)
-    new_df['序号'] = pd.Series(list(range(1, len(new_df) + 1)))
-    # new_df['日期（年/月/日）'] = new_df['日期（年/月/日）'].dt.strftime('%Y/%m/%d')
+
     if backup and os.path.exists(dist_path):
         os.rename(dist_path, dist_path + '.bak')
 
-    new_df.to_excel(dist_path, '工作任务项', index=False)
-    logger.info(f'已经合并到文件 "{dist_path}"')
+    # cp template
+    shutil.copyfile(global_config.template_project, dist_path)
 
+    dist_book = openpyxl.load_workbook(dist_path)
+    dist_sheet = dist_book['工作任务项']
+    dist_sheet.delete_rows(2, dist_sheet.max_row + 1)
+    col_group, col_date = 0, 0
+    for idx in range(1, 1 + dist_sheet.max_column):
+        if dist_sheet.cell(1, idx).value == '组名':
+            col_group = idx - 1
+        elif dist_sheet.cell(1, idx).value == '日期（年/月/日）':
+            col_date = idx - 1
+
+    for eachfile in filelist:
+        group_name = re.findall(pattern, eachfile)[0]
+        full_path = os.path.join(dist_dir, eachfile)
+        source_sheet = openpyxl.load_workbook(
+            full_path, read_only=True)['工作任务项']
+        # print(source_sheet[1])
+        for row_idx in range(2, source_sheet.max_row + 1):
+            row_element = []
+            for col_idx in range(1, source_sheet.max_column + 1):
+                row_element.append(source_sheet.cell(
+                    row=row_idx, column=col_idx).value)
+            row_element.insert(col_group, group_name)
+            if not isinstance(row_element[col_date], str):
+                row_element[col_date] = datetime.datetime.strftime(
+                    row_element[col_date], "%Y/%m/%d")
+            dist_sheet.append(row_element)
+    
+    # align to left
+    for row in dist_sheet.iter_rows(min_row=2):
+        for col in row:
+            col.alignment = align
+
+    # update pivot table
+    for sheet_idx in range(len(dist_book.sheetnames)):
+        if dist_book.sheetnames[sheet_idx] == '工作任务项':
+            continue
+        pivot_sheet = dist_book[dist_book.sheetnames[sheet_idx]]
+        pivot = pivot_sheet._pivots[0]  # 任何一个都可以共享同一个缓存
+        boundary = f'A1:{chr(ord("A") + dist_sheet.max_column - 1)}{dist_sheet.max_row}'
+        pivot.cache.cacheSource.worksheetSource.ref = boundary
+        pivot.cache.refreshOnLoad = True  # 刷新加载
+
+    dist_book.save(dist_path)
+    logger.info(f'已经合并到文件 "{dist_path}"')
     return dist_path
 
 
