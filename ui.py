@@ -14,6 +14,8 @@ VERSION = 'v0.3-alpha'
 
 
 def create_ui():
+    if not mBox.askyesno('提示', '在汇总之前请先确认本地svn库已同步至最新'):
+        exit()
     main_frame = tk.Frame(win)
 
     # ----------------- tab  -----------------
