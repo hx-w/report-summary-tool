@@ -2,7 +2,6 @@
 
 import shutil
 import datetime
-import pandas as pd
 import openpyxl
 
 from typedef import *
@@ -12,14 +11,16 @@ align = openpyxl.styles.Alignment(
 
 
 def get_swsg_week_list(group_name: str) -> list:
-    source_dir = os.path.join('.', group_name)
-    pattern = re.compile(global_config.week_pattern)
-    week_list = list(filter(
-        lambda x: re.match(pattern, x),
-        os.listdir(source_dir)
-    ))
-    week_list.sort(reverse=True)
-    return week_list
+    # source_dir = os.path.join('.', group_name)
+    # pattern = re.compile(global_config.week_pattern)
+    # week_list = list(filter(
+    #     lambda x: re.match(pattern, x),
+    #     os.listdir(source_dir)
+    # ))
+
+    # week_list.sort(reverse=True)
+    # return week_list
+    pass
 
 
 def get_swmg_week_list(reverse: bool = True, sw=False) -> list:
@@ -302,19 +303,6 @@ def exec_mw_merge(start_week: str, end_week: str, backup: bool = False) -> str:
         pivot.cache.refreshOnLoad = True  # 刷新加载
 
     dist_book.save(dist_path)
-    # df_list = []
-    # for eachweek_idx in range(start_idx, end_idx + 1):
-    #     eachweek = week_list[eachweek_idx]
-    #     file_path = os.path.join(global_config.summary, os.path.join(
-    #         eachweek, f'{global_config.prefix}项目工作周报-{eachweek}.xlsx'
-    #     ))
-    #     df = pd.read_excel(file_path)
-    #     df_list.append(df)
-
-    # new_df = pd.concat(df_list)
-    # new_df.reset_index(drop=True, inplace=True)
-    # new_df['序号'] = pd.Series(list(range(1, len(new_df) + 1)))
-    # new_df.to_excel(dist_path, '工作任务项', index=False)
     logger.info(f'已经合并到文件 "{dist_path}"')
     return dist_path
 
@@ -323,6 +311,7 @@ def judge_swsg_empty(group_name: str, week: str) -> bool:
     source_dir = os.path.join(
         '.', os.path.join(group_name, week)
     )
+    if not os.path.exists(source_dir): return True
     pattern = re.compile(f'{global_config.prefix}个人工作周报-{week}-(.*).xlsx')
     filelist = list(filter(
         lambda x: re.match(pattern, x),
@@ -343,6 +332,7 @@ def get_swsg_preview(group_name: str, week: str) -> str:
     source_dir = os.path.join(
         '.', os.path.join(group_name, week)
     )
+    if not os.path.exists(source_dir): return '<空>'
     pattern = re.compile(f'{global_config.prefix}个人工作周报-{week}-(.*).xlsx')
     filelist = list(filter(
         lambda x: re.match(pattern, x),

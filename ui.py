@@ -10,7 +10,7 @@ from script import *
 win = tk.Tk()
 win.title('周报汇总工具')
 
-VERSION = 'v0.2-beta'
+VERSION = 'v0.3-alpha'
 
 
 def create_ui():
@@ -83,21 +83,16 @@ def create_ui():
     ttk.Label(tab_swsg, text='选择小组').grid(row=0, column=0, padx=10, pady=10)
 
     def cb_swsg_group_callback(event):
-        choose_group = cb_swsg_group.get()
-        cb_swsg_week['value'] = get_swsg_week_list(choose_group)
+        cb_swsg_week['value'] = get_swmg_week_list(True, True)
         text_swsg_preview.configure(state="normal")
         text_swsg_preview.delete(1.0, tk.END)
-        if len(cb_swsg_week['value']) > 0:
-            cb_swsg_week.current(0)
-            cb_swsg_week.configure(state="readonly")
+        if judge_swsg_empty(cb_swsg_group.get(), cb_swsg_week.get()):
+            btn_swsg_confirm.configure(state="disabled")
+            text_swsg_preview.insert(tk.END, '<空>')
+        else:
             btn_swsg_confirm.configure(state="ready")
             text_swsg_preview.insert(tk.END, get_swsg_preview(
                 cb_swsg_group.get(), cb_swsg_week.get()))
-        else:
-            cb_swsg_week.set('')
-            cb_swsg_week.configure(state="disabled")
-            btn_swsg_confirm.configure(state="disabled")
-            text_swsg_preview.insert(tk.END, '<空>')
         text_swsg_preview.configure(state="disabled")
 
     def cb_swsg_week_callback(event):
@@ -121,7 +116,8 @@ def create_ui():
 
     ttk.Label(tab_swsg, text='选择周次').grid(row=1, column=0)
     cb_swsg_week = ttk.Combobox(tab_swsg, state="readonly")
-    cb_swsg_week['value'] = get_swsg_week_list(cb_swsg_group['value'][0])
+    # cb_swsg_week['value'] = get_swsg_week_list(cb_swsg_group['value'][0])
+    cb_swsg_week['value'] = get_swmg_week_list(True, True)
     if len(cb_swsg_week['value']) > 0:
         cb_swsg_week.current(0)
     cb_swsg_week.grid(row=1, column=1, pady=10)
@@ -153,6 +149,13 @@ def create_ui():
         tab_swsg, text="执行", command=btn_swsg_callback)
     btn_swsg_confirm.grid(row=8, column=0, columnspan=2, pady=20)
 
+    if len(cb_swsg_week['value']) == 0:
+        text_swsg_preview.configure(state="normal")
+        text_swsg_preview.insert(tk.END, '<空>')
+        cb_swsg_week.configure(state="disabled")
+        btn_swsg_confirm.configure(state="disabled")
+        text_swsg_preview.configure(state="disabled")
+        
     # ----------------- tab 2 tab_swmg ----------------
     def cb_swmg_week_callback(event):
         choose_week = cb_swmg_week.get()
