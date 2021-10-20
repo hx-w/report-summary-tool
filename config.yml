@@ -23,7 +23,10 @@ file_structure:
     05_GUI组,
     06_测试组 
   ]
-  template: 模板
+  # 模版文件
+  template:
+    group_summary: 模板/小组模板.xlsx
+    project_summary: 模板/项目模板.xlsx
 
 file_prefix: 通用网格生成软件
 group_pattern: 0.+_.+组
