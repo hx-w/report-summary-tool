@@ -149,9 +149,6 @@ def exec_swsg_merge(group_name: str, week: str, backup: bool = False) -> str:
             col_name = idx - 1
         elif dist_sheet.cell(1, idx).value == '日期（年/月/日）':
             col_date = idx - 1
-    # DEBUG
-    logger.debug(f'col_date = {col_date}')
-    # col_date = 2
     total_order = 1
     for eachfile in filelist:
         name = re.findall(pattern, eachfile)[0]
@@ -223,9 +220,6 @@ def exec_swmg_merge(week: str, backup: bool = False) -> str:
             col_group = idx - 1
         elif dist_sheet.cell(1, idx).value == '日期（年/月/日）':
             col_date = idx - 1
-    # DEBUG
-    logger.debug(f'col_date = {col_date}')
-    # col_date = 3
 
     total_order = 1
     for eachfile in filelist:
@@ -299,10 +293,6 @@ def exec_mw_merge(start_week: str, end_week: str, backup: bool = False) -> str:
             col_date = idx - 1
             break
     
-    # DEBUG
-    logger.debug(f'col_date = {col_date}')
-    # col_date = 3
-
     total_order = 1
     for eachweek_idx in range(start_idx, end_idx + 1):
         eachweek = week_list[eachweek_idx]

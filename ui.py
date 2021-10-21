@@ -55,6 +55,7 @@ def create_ui():
                 text_swmg_preview.configure(state="disabled")
                 # cb_swmg_week.configure(state="disabled")
                 return
+            label_swmg_count.configure(text=f'{get_swmg_count(cb_swmg_week.get())}组')
             cb_swmg_week.configure(state="readonly")
             btn_swmg_confirm.configure(state="ready")
             text_swmg_preview.insert(
@@ -74,9 +75,9 @@ def create_ui():
                 cb_mw_end_week.current(0)
                 cb_mw_end_week.configure(state="readonly")
                 label_week_count.configure(text=str(get_week_count(
-                    cb_mw_start_week.get(), cb_mw_end_week.get())))
+                    cb_mw_start_week.get(), cb_mw_end_week.get())) + '周')
             else:
-                label_week_count.configure(text="0")
+                label_week_count.configure(text="0周")
                 cb_mw_end_week.set('')
                 cb_mw_end_week.configure(state="disabled")
     notebook.bind("<<NotebookTabChanged>>", tab_changed_callback)
