@@ -181,11 +181,13 @@ def exec_swsg_merge(group_name: str, week: str, backup: bool = False) -> str:
     for sheet_idx in range(len(dist_book.sheetnames)):
         if dist_book.sheetnames[sheet_idx] == '工作任务项':
             continue
-        pivot_sheet = dist_book[dist_book.sheetnames[sheet_idx]]
-        pivot = pivot_sheet._pivots[0]  # 任何一个都可以共享同一个缓存
-        boundary = f'A1:{chr(ord("A") + dist_sheet.max_column - 1)}{dist_sheet.max_row}'
-        pivot.cache.cacheSource.worksheetSource.ref = boundary
-        pivot.cache.refreshOnLoad = True  # 刷新加载
+        try:
+            pivot_sheet = dist_book[dist_book.sheetnames[sheet_idx]]
+            pivot = pivot_sheet._pivots[0]  # 任何一个都可以共享同一个缓存
+            boundary = f'A1:{chr(ord("A") + dist_sheet.max_column - 1)}{dist_sheet.max_row}'
+            pivot.cache.cacheSource.worksheetSource.ref = boundary
+            pivot.cache.refreshOnLoad = True  # 刷新加载
+        except: pass
 
     dist_book.save(dist_path)
 
@@ -253,11 +255,13 @@ def exec_swmg_merge(week: str, backup: bool = False) -> str:
     for sheet_idx in range(len(dist_book.sheetnames)):
         if dist_book.sheetnames[sheet_idx] == '工作任务项':
             continue
-        pivot_sheet = dist_book[dist_book.sheetnames[sheet_idx]]
-        pivot = pivot_sheet._pivots[0]  # 任何一个都可以共享同一个缓存
-        boundary = f'A1:{chr(ord("A") + dist_sheet.max_column - 1)}{dist_sheet.max_row}'
-        pivot.cache.cacheSource.worksheetSource.ref = boundary
-        pivot.cache.refreshOnLoad = True  # 刷新加载
+        try:
+            pivot_sheet = dist_book[dist_book.sheetnames[sheet_idx]]
+            pivot = pivot_sheet._pivots[0]  # 任何一个都可以共享同一个缓存
+            boundary = f'A1:{chr(ord("A") + dist_sheet.max_column - 1)}{dist_sheet.max_row}'
+            pivot.cache.cacheSource.worksheetSource.ref = boundary
+            pivot.cache.refreshOnLoad = True  # 刷新加载
+        except: pass
 
     dist_book.save(dist_path)
     logger.info(f'已经合并到文件 "{dist_path}"')
@@ -327,11 +331,13 @@ def exec_mw_merge(start_week: str, end_week: str, backup: bool = False) -> str:
     for sheet_idx in range(len(dist_book.sheetnames)):
         if dist_book.sheetnames[sheet_idx] == '工作任务项':
             continue
-        pivot_sheet = dist_book[dist_book.sheetnames[sheet_idx]]
-        pivot = pivot_sheet._pivots[0]  # 任何一个都可以共享同一个缓存
-        boundary = f'A1:{chr(ord("A") + dist_sheet.max_column - 1)}{dist_sheet.max_row}'
-        pivot.cache.cacheSource.worksheetSource.ref = boundary
-        pivot.cache.refreshOnLoad = True  # 刷新加载
+        try:
+            pivot_sheet = dist_book[dist_book.sheetnames[sheet_idx]]
+            pivot = pivot_sheet._pivots[0]  # 任何一个都可以共享同一个缓存
+            boundary = f'A1:{chr(ord("A") + dist_sheet.max_column - 1)}{dist_sheet.max_row}'
+            pivot.cache.cacheSource.worksheetSource.ref = boundary
+            pivot.cache.refreshOnLoad = True  # 刷新加载
+        except: pass
 
     dist_book.save(dist_path)
     logger.info(f'已经合并到文件 "{dist_path}"')
