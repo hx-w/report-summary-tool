@@ -10,7 +10,7 @@ from script import *
 win = tk.Tk()
 win.title('周报汇总工具')
 
-VERSION = 'v0.3-alpha'
+VERSION = 'v0.3-beta'
 
 
 def create_ui():

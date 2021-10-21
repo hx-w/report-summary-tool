@@ -149,7 +149,9 @@ def exec_swsg_merge(group_name: str, week: str, backup: bool = False) -> str:
             col_name = idx - 1
         elif dist_sheet.cell(1, idx).value == '日期（年/月/日）':
             col_date = idx - 1
-
+    # DEBUG
+    logger.debug(f'col_date = {col_date}')
+    col_date = 2
     total_order = 1
     for eachfile in filelist:
         name = re.findall(pattern, eachfile)[0]
@@ -163,8 +165,9 @@ def exec_swsg_merge(group_name: str, week: str, backup: bool = False) -> str:
                 row_element.append(source_sheet.cell(
                     row=row_idx, column=col_idx).value)
             row_element.insert(col_name, name)
-            row_element[col_date] = datetime.datetime.strftime(
-                row_element[col_date], "%Y/%m/%d")
+            if row_element[col_date] and not isinstance(row_element[col_date], str):
+                row_element[col_date] = datetime.datetime.strftime(
+                    row_element[col_date], "%Y/%m/%d")
             row_element[0] = total_order
             dist_sheet.append(row_element)
             total_order += 1
@@ -217,6 +220,9 @@ def exec_swmg_merge(week: str, backup: bool = False) -> str:
             col_group = idx - 1
         elif dist_sheet.cell(1, idx).value == '日期（年/月/日）':
             col_date = idx - 1
+    # DEBUG
+    logger.debug(f'col_date = {col_date}')
+    col_date = 3
 
     total_order = 1
     for eachfile in filelist:
@@ -231,7 +237,7 @@ def exec_swmg_merge(week: str, backup: bool = False) -> str:
                 row_element.append(source_sheet.cell(
                     row=row_idx, column=col_idx).value)
             row_element.insert(col_group, group_name)
-            if not isinstance(row_element[col_date], str):
+            if row_element[col_date] and not isinstance(row_element[col_date], str):
                 row_element[col_date] = datetime.datetime.strftime(
                     row_element[col_date], "%Y/%m/%d")
             row_element[0] = total_order
@@ -287,6 +293,10 @@ def exec_mw_merge(start_week: str, end_week: str, backup: bool = False) -> str:
             col_date = idx - 1
             break
     
+    # DEBUG
+    logger.debug(f'col_date = {col_date}')
+    col_date = 3
+
     total_order = 1
     for eachweek_idx in range(start_idx, end_idx + 1):
         eachweek = week_list[eachweek_idx]
@@ -301,7 +311,7 @@ def exec_mw_merge(start_week: str, end_week: str, backup: bool = False) -> str:
             for col_idx in range(1, source_sheet.max_column + 1):
                 row_element.append(source_sheet.cell(
                     row=row_idx, column=col_idx).value)
-            if not isinstance(row_element[col_date], str):
+            if row_element[col_date] and not isinstance(row_element[col_date], str):
                 row_element[col_date] = datetime.datetime.strftime(
                     row_element[col_date], "%Y/%m/%d")
             row_element[0] = total_order
