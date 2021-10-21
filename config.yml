@@ -25,8 +25,8 @@ file_structure:
   ]
   # 模版文件
   template:
-    group_summary: 模板/小组模板.xlsx
-    project_summary: 模板/项目模板.xlsx
+    group_summary: 模板/通用网格生成软件小组工作周报.xlsx
+    project_summary: 模板/通用网格生成软件项目工作周报.xlsx
 
 file_prefix: 通用网格生成软件
 group_pattern: 0.+_.+组

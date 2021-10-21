@@ -151,7 +151,7 @@ def exec_swsg_merge(group_name: str, week: str, backup: bool = False) -> str:
             col_date = idx - 1
     # DEBUG
     logger.debug(f'col_date = {col_date}')
-    col_date = 2
+    # col_date = 2
     total_order = 1
     for eachfile in filelist:
         name = re.findall(pattern, eachfile)[0]
@@ -164,6 +164,7 @@ def exec_swsg_merge(group_name: str, week: str, backup: bool = False) -> str:
             for col_idx in range(1, source_sheet.max_column + 1):
                 row_element.append(source_sheet.cell(
                     row=row_idx, column=col_idx).value)
+            if None in row_element: continue
             row_element.insert(col_name, name)
             if row_element[col_date] and not isinstance(row_element[col_date], str):
                 row_element[col_date] = datetime.datetime.strftime(
@@ -224,7 +225,7 @@ def exec_swmg_merge(week: str, backup: bool = False) -> str:
             col_date = idx - 1
     # DEBUG
     logger.debug(f'col_date = {col_date}')
-    col_date = 3
+    # col_date = 3
 
     total_order = 1
     for eachfile in filelist:
@@ -238,6 +239,7 @@ def exec_swmg_merge(week: str, backup: bool = False) -> str:
             for col_idx in range(1, source_sheet.max_column + 1):
                 row_element.append(source_sheet.cell(
                     row=row_idx, column=col_idx).value)
+            if None in row_element: continue
             row_element.insert(col_group, group_name)
             if row_element[col_date] and not isinstance(row_element[col_date], str):
                 row_element[col_date] = datetime.datetime.strftime(
@@ -299,7 +301,7 @@ def exec_mw_merge(start_week: str, end_week: str, backup: bool = False) -> str:
     
     # DEBUG
     logger.debug(f'col_date = {col_date}')
-    col_date = 3
+    # col_date = 3
 
     total_order = 1
     for eachweek_idx in range(start_idx, end_idx + 1):
@@ -315,6 +317,7 @@ def exec_mw_merge(start_week: str, end_week: str, backup: bool = False) -> str:
             for col_idx in range(1, source_sheet.max_column + 1):
                 row_element.append(source_sheet.cell(
                     row=row_idx, column=col_idx).value)
+            if None in row_element: continue
             if row_element[col_date] and not isinstance(row_element[col_date], str):
                 row_element[col_date] = datetime.datetime.strftime(
                     row_element[col_date], "%Y/%m/%d")
